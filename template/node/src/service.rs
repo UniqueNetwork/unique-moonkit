@@ -237,7 +237,11 @@ where
 	let transaction_pool = params.transaction_pool.clone();
 	let import_queue_service = params.import_queue.service();
 
-	let net_config = FullNetworkConfiguration::<_, _, N>::new(&parachain_config.network);
+	let net_config = 
+		sc_network::config::FullNetworkConfiguration::<_, _, N>::new(
+			&parachain_config.network,
+			parachain_config.prometheus_config.as_ref().map(|cfg| cfg.registry.clone()),
+		);
 
 	let metrics = N::register_notification_metrics(
 		parachain_config
@@ -440,7 +444,11 @@ where
 		other: (_, mut telemetry, _),
 	} = new_partial(&config)?;
 
-	let net_config = FullNetworkConfiguration::<_, _, N>::new(&config.network);
+	let net_config =
+		sc_network::config::FullNetworkConfiguration::<_, _, N>::new(
+			&config.network,
+			config.prometheus_config.as_ref().map(|cfg| cfg.registry.clone()),
+		);
 
 	let metrics = N::register_notification_metrics(
 		config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
